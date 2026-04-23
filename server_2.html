@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STOCKHUB - Central Security Server</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>    
+    <style>
+        body { background: #0a0e14; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; overflow: hidden; }
+        .panel { border: 1px solid #1a2433; background: #0d1117; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
+        .p-header { background: #1a2433; padding: 12px 20px; color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
+        .console { flex: 1; padding: 20px; overflow-y: auto; font-size: 13px; line-height: 1.8; color: #00ff41; }
+        .blink-dot { width: 10px; height: 10px; background: #ff4d4d; border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .db-panel { background: #fff; color: #333; }
+        .db-table { width: 100%; border-collapse: collapse; font-family: 'Roboto', sans-serif; font-size: 12px; }
+        .db-table th { background: #111c33; color: #fff; padding: 12px; text-align: left; position: sticky; top: 0; }
+        .db-table td { padding: 12px; border-bottom: 1px solid #eee; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+<h2 style="color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+    <i class='bx bx-shield-quarter'></i> STOCKHUB CENTRAL SECURITY MONITORING
+</h2>
+
+<div class="layout">
+    <div class="panel">
+        <div class="p-header">
+            <span><i class='bx bx-radar'></i> PACKET SNIFFER V5.0</span>
+            <span style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
+                <div class="blink-dot"></div> RECORDING TRAFFIC
+            </span>
+        </div>
+        <div class="console" id="logs">
+            [SYSTEM] StockHub Firewall Initialized...<br>
+            [SYSTEM] Listening on BroadcastChannel: 'stockhub_security_link'<br>
+            [WAITING] Awaiting incoming traffic...<br>
+        </div>
+    </div>
+
+    <div class="panel db-panel">
+        <div class="p-header" style="background: #111c33;">
+            <span><i class='bx bx-hdd'></i> SECURE DATABASE CENTER</span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="user-total">Total: 0</span>
+            </div>
+        </div>
+        <div style="overflow-y: auto; flex: 1;">
+            <table class="db-table">
+                <thead>
+                    <tr>
+                        <th>USER</th>
+                        <th>EMAIL</th>
+                        <th>HASHED (SHA-256)</th>
+                        <th>TIME</th>
+                    </tr>
+                </thead>
+                <tbody id="db-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- GIỮ NGUYÊN TOÀN BỘ HTML/CSS CŨ, CHỈ THAY ĐỔI PHẦN <script> -->
+<!-- 1. THÊM THƯ VIỆN EMAILJS VÀO TRƯỚC THẺ <script> CỦA SEVER.HTML -->
+
+<!-- 1. THƯ VIỆN BẮT BUỘC -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script>
+    // --- KHỞI TẠO EMAILJS ---
+    emailjs.init("u3rdp1kDSyT-QzgdF"); 
+
+    // --- KHỞI TẠO FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyC_mYOA4PBCN48n0hrzZ8KiPRmkd6iAaI0",
+        authDomain: "stockhub-3003.firebaseapp.com",
+        databaseURL: "https://stockhub-3003-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "stockhub-3003",
+        storageBucket: "stockhub-3003.firebasestorage.app",
+        messagingSenderId: "915687365266",
+        appId: "1:915687365266:web:3338870c4afc4fda22244b"
+    };
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const database = firebase.database();
+
+    // --- BIẾN TOÀN CỤC ---
+    const logs = document.getElementById('logs');
+    const dbBody = document.getElementById('db-body');
+    const userTotalLabel = document.getElementById('user-total');
+    let userDatabase = [];
+
+    // --- HÀM HỖ TRỢ GIAO DIỆN ---
+    function addLog(msg, isRed = false) {
+        const div = document.createElement('div');
+        if(isRed) div.style.color = "#ff4d4d";
+        div.innerHTML = `> [${new Date().toLocaleTimeString()}] ${msg}`;
+        logs.appendChild(div);
+        logs.scrollTop = logs.scrollHeight;
+    }
+
+    function updateUI() {
+        userDatabase.sort((a, b) => String(a.Username).toLowerCase() < String(b.Username).toLowerCase() ? -1 : 1);
+        dbBody.innerHTML = '';
+        userDatabase.forEach(u => {
+            const email = u.Email || u.email || 'N/A';
+            const hashed = u['SHA-256'] || u.hashed_password || 'N/A';
+            const time = u.Time || u.timestamp || 'N/A';
+            dbBody.insertAdjacentHTML('beforeend', `<tr><td><b>${u.Username}</b></td><td>${email}</td><td>${hashed}</td><td>${time}</td></tr>`);
+        });
+        userTotalLabel.innerText = `Total: ${userDatabase.length}`;
+    }
+
+    // --- TRUNG TÂM XỬ LÝ DỮ LIỆU TỪ MỌI NƠI (FIREBASE) ---
+    // --- TRUNG TÂM XỬ LÝ DỮ LIỆU (ĐÃ FIX LỖI GỬI MAIL CHẬM/LẶP) ---
+database.ref('network_traffic').on('child_added', (snapshot) => {
+    const event = snapshot.val();
+    const eventKey = snapshot.key; // Lấy ID của yêu cầu để xóa sau khi xong
+    const data = event.payload;
+
+    // 1. XỬ LÝ ĐĂNG KÝ
+    if (event.type === 'NEW_REGISTRATION') {
+        addLog(`[SNIFFED] New Registration: <b>${data.username}</b>`);
+        userDatabase.push({
+            Username: data.username,
+            Email: data.email,
+            Password: data.password,
+            "SHA-256": data.hashed_password,
+            Time: data.timestamp
+        });
+        updateUI();
+        database.ref('network_traffic').child(eventKey).remove(); // XỬ LÝ XONG THÌ XÓA
+    }
+
+    // 2. XỬ LÝ LOGIN (FIX CHÍNH Ở ĐÂY)
+    if (event.type === 'LOGIN_ATTEMPT') {
+        addLog(`[SNIFFED] Login Request: <b>${data.username}</b>`);
+        
+        const match = userDatabase.find(u => 
+            String(u.Username) === String(data.username) && 
+            String(u.Password) === String(data.password)
+        );
+        
+        if (match) {
+            const otp = Math.floor(1000000 + Math.random() * 9000000).toString();
+            const targetEmail = match.Email || match.email;
+            
+            addLog(`[AUTH] Credentials Match! Sending OTP: <span style="color:#fff; background:#ff4d4d; padding:2px 5px; border-radius:3px">${otp}</span>`, true);
+            
+            // Gửi mail thật
+            emailjs.send("service_stockhub12", "template_jfstctj", { 
+                to_email: targetEmail, 
+                Username: match.Username, 
+                otp_code: otp,
+                expire_time: "2"
+            }).then(() => {
+                addLog(`[SYSTEM] OTP sent successfully to ${targetEmail}`);
+            }).catch(err => {
+                addLog(`[ERROR] EmailJS Failed: ${JSON.stringify(err)}`, true);
+            });
+
+            // Gửi phản hồi về cho Index
+            database.ref('auth_responses/' + data.username).set({
+                status: 'SUCCESS',
+                otp: otp,
+                email: targetEmail,
+                timestamp: Date.now()
+            });
+        } else {
+            addLog(`[AUTH] Login Failed: Incorrect credentials for ${data.username}`, true);
+            database.ref('auth_responses/' + data.username).set({ status: 'FAIL', timestamp: Date.now() });
+        }
+        
+        // CỰC KỲ QUAN TRỌNG: Xóa yêu cầu Login này khỏi Firebase để không bị gửi mail lặp lại
+        database.ref('network_traffic').child(eventKey).remove();
+    }
+
+    // 3. XỬ LÝ KIỂM TRA TRÙNG (CHECK DUPLICATE)
+    if (event.type === 'CHECK_DUPLICATE') {
+        const isUserTaken = userDatabase.some(u => String(u.Username).toLowerCase() === String(data.username).toLowerCase());
+        const isEmailTaken = userDatabase.some(u => String(u.Email).toLowerCase() === String(data.email).toLowerCase());
+        let result = { status: 'AVAILABLE' };
+        if (isUserTaken) result = { status: 'ERROR', message: 'Username has been taken' };
+        else if (isEmailTaken) result = { status: 'ERROR', message: 'Email has been taken' };
+
+        database.ref('reg_validation/' + data.username).set(result);
+        database.ref('network_traffic').child(eventKey).remove(); // XÓA SAU KHI XỬ LÝ
+    }
+});
+</script>
+</body>
+</html>

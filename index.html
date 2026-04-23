@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>STOCKHUB - Official Website</title>
+   
+   <!-- CSS bên ngoài -->
+   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+   <!-- CSS nội bộ của bạn -->
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <!-- Copy TOÀN BỘ phần <body> cũ của bạn vào đây (Header, Main, Section, Footer...) -->
+   <!-- GIỮ LẠI CÁC THẺ HTML NHƯ: <header>, <div class="main-content">, <div class="modal-overlay"> ... -->
+<body>
+
+   <!-- GIAO DIỆN NGOÀI -->
+   <header>
+    <div class="logo-box">
+    <img src="Pics/logo hub.png" alt="HUB"><span>STOCK</span>
+</div>
+
+
+    <nav class="nav-menu">
+    <div class="nav-item">
+        <a href="#">About StockHub <i class='bx bx-chevron-down'></i></a>
+        <div class="dropdown">
+            <a href="#">General Introduction</a>
+            <a href="#">Leadership Team</a>
+            <a href="#">Investor Relations</a>
+            <a href="#">Headquarters</a>
+        </div>
+    </div>
+    <div class="nav-item">
+        <a href="#">Services <i class='bx bx-chevron-down'></i></a>
+        <div class="dropdown">
+            <a href="#">Open Account</a>
+            <a href="#">Investment Advisory</a>
+            <a href="#">Online Trading</a>
+            <a href="#">Margin Products</a>
+        </div>
+    </div>
+    <div class="nav-item"><a href="#">Market</a></div>
+    <div class="nav-item"><a href="#">News</a></div>
+</nav>
+
+
+    <button class="btn-login-nav" onclick="openLogin()">Log in</button>
+</header>
+
+<!-- DROPDOWN MENU (Ẩn mặc định) -->
+<div id="user-dropdown" class="user-dropdown-content">
+    <a href="javascript:void(0)" onclick="openProfile()"><i class='bx bx-user-circle'></i> View Profile</a>
+    <hr>
+    <a href="javascript:void(0)" onclick="handleLogout()" style="color: #ff4d4d;"><i class='bx bx-log-out-circle'></i> Log out</a>
+</div>
+
+<!-- PROFILE MODAL  -->
+<div class="profile-overlay" id="profileModal">
+    <div class="profile-card">
+        <i class='bx bx-x close-profile' onclick="closeProfile()"></i>
+        <div class="profile-header">
+            <div class="profile-img-box">
+                <img src="https://ui-avatars.com/api/?name=User&background=00d084&color=fff&size=128" id="display-avatar">
+            </div>
+            <h2 id="prof-display-name">Username</h2>
+            <p id="prof-display-email">email@example.com</p>
+        </div>
+        
+        <div class="profile-body">
+            <div class="info-row">
+                <label><i class='bx bxs-user'></i> Full Name</label>
+                <input type="text" id="edit-fullname" placeholder="Enter your full name...">
+            </div>
+            <div class="info-row">
+                <label><i class='bx bxs-phone'></i> Phone Number</label>
+                <input type="tel" id="edit-phone" placeholder="Enter phone number...">
+            </div>
+            <div class="info-row">
+                <label><i class='bx bxs-quote-left'></i> Bio / Description</label>
+                <textarea id="edit-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+            </div>
+            <button class="btn-save-profile" onclick="saveProfileInfo()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+ <!-- thêm biểu đồ vn-index cho nó thật nhìn giống web chứng khoán hơn -->
+
+<!-- PHẦN CHỈ SỐ VN-INDEX (VNI) - BẢN FIX LỖI HIỂN THỊ CHART -->
+<div class="vni-section">
+   <div class="vni-container">
+       <!-- Thông tin chữ bên trái -->
+       <div class="vni-info">
+           <span class="vni-name">VN Index (VNI)</span>
+           <span class="vni-price" id="vni-realtime-price">1,284.32</span>
+           <span class="vni-change">
+               <i class='bx bxs-up-arrow'></i> +15.45 (1.21%)
+           </span>
+       </div>
+     
+       <!-- Biểu đồ mini bản Advanced (Bản này mới hiện được VNI) -->
+       <div class="vni-chart" id="tv-chart-vni">
+           <!-- Widget TradingView sẽ được chèn vào đây bởi Script bên dưới -->
+       </div>
+   </div>
+</div>
+
+<!-- Script để gọi Chart (Đặt ngay dưới đoạn HTML này) -->
+   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+   <script type="text/javascript">
+   new TradingView.widget({
+       "autosize": true,
+       "symbol": "HOSE:VNINDEX",
+       "interval": "D",
+       "timezone": "Asia/Ho_Chi_Minh",
+       "theme": "light",
+       "style": "3", /* Kiểu biểu đồ vùng (Area) cho nhẹ */
+       "locale": "vi",
+       "toolbar_bg": "#f1f3f6",
+       "enable_publishing": false,
+       "hide_top_toolbar": true, /* Ẩn thanh công cụ để nhìn gọn */
+       "hide_legend": true,
+       "save_image": false,
+       "container_id": "tv-chart-vni"
+   });
+   </script>   
+
+<div class="main-content">
+    <h2 class="section-title">Latest Global Market News</h2>
+    <div class="news-grid">
+        <!-- BÀI BÁO 1 -->
+        <a href="https://www.reuters.com/markets/us/" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop" alt="Wall Street"></div>
+            <span class="news-source">Reuters</span>
+            <h3>Wall Street rallies as Fed maintains interest rate outlook</h3>
+            <p>U.S. stock indices hit record highs following the Federal Reserve's decision to leave interest rates unchanged while still projecting three cuts this year.</p>
+        </a>
+        <!-- BÀI BÁO 2 -->
+        <a href="https://www.cnbc.com/technology/" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" alt="Tech Stocks"></div>
+            <span class="news-source">CNBC</span>
+            <h3>Nvidia reveals new Blackwell AI chips, aiming to cement dominance</h3>
+            <p>The tech giant showcased its next-generation processors, promising massive performance leaps that could further fuel the ongoing AI rally in tech stocks.</p>
+        </a>
+        <!-- BÀI BÁO 3 -->
+        <a href="https://www.bloomberg.com/markets" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1610312278520-bcc893a3ff1d?q=80&w=800&auto=format&fit=crop" alt="Gold"></div>
+            <span class="news-source">Bloomberg</span>
+            <h3>Gold surges past $2,200 an ounce for the first time in history</h3>
+            <p>Bullion continues its blistering rally driven by expectations of loose monetary policy and robust safe-haven demand amidst global geopolitical tensions.</p>
+        </a>
+        <!-- BÀI BÁO 4 -->
+     <a href="https://finance.yahoo.com/" target="_blank" class="news-card">
+  <div class="img-box-news">
+      <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop" alt="Stock Market Stock Chart">
+  </div>
+  <span class="news-source">Yahoo Finance</span>
+  <h3>Tech Stocks Surge, Lifting S&P 500 to Another Record High</h3>
+  <p>Strong earnings from major technology companies continue to drive Wall Street's momentum, despite concerns over inflation.</p>
+</a>
+        <!-- BÀI BÁO 5 -->
+        <a href="https://www.wsj.com/finance" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?q=80&w=800&auto=format&fit=crop" alt="Apple"></div>
+            <span class="news-source">Wall Street Journal</span>
+            <h3>Apple shares face pressure amidst DOJ antitrust lawsuit</h3>
+            <p>The tech behemoth's stock stumbled after the U.S. Justice Department filed a landmark lawsuit accusing Apple of monopolizing the smartphone market.</p>
+        </a>
+        <!-- BÀI BÁO 6 -->
+        <a href="https://www.cnbc.com/world-markets/" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop" alt="Asia Markets"></div>
+            <span class="news-source">CNBC</span>
+            <h3>Nikkei 225 shatters 40,000 mark as BOJ ends negative rates</h3>
+            <p>Japan's historic shift in monetary policy failed to dampen the stock market's momentum, with the Nikkei index reaching unprecedented milestones.</p>
+        </a>
+        <!-- BÀI BÁO 7 -->
+  <a href="https://www.reuters.com/markets/" target="_blank" class="news-card">
+  <div class="img-box-news">
+      <img src="https://picsum.photos/id/180/800/500" alt="Global Trading">
+  </div>
+  <span class="news-source">Reuters</span>
+  <h3>Global stocks steady as investors weigh economic recovery data</h3>
+  <p>Market participants are closely monitoring manufacturing output and employment figures to gauge the next move in global trade policy.</p>
+</a>
+        <!-- BÀI BÁO 8 -->
+        <a href="https://www.bloomberg.com/crypto" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=800&auto=format&fit=crop" alt="Bitcoin"></div>
+            <span class="news-source">Bloomberg</span>
+            <h3>Bitcoin exhibits extreme volatility ahead of the 'Halving' event</h3>
+            <p>The world's largest cryptocurrency experienced sharp price swings as traders position themselves for the upcoming reduction in daily mining rewards.</p>
+        </a>
+        <!-- BÀI BÁO 9 -->
+        <a href="https://www.ft.com/markets" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" alt="European Markets"></div>
+            <span class="news-source">Financial Times</span>
+            <h3>European indices close at record highs on rate cut optimism</h3>
+            <p>The Stoxx 600 index pushed higher as slowing inflation across the Eurozone cemented expectations for a June interest rate cut by the ECB.</p>
+        </a>
+        <!-- BÀI BÁO 10 -->
+        <a href="https://finance.yahoo.com/news/reddit-ipo" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1614026480209-cd9934144671?q=80&w=800&auto=format&fit=crop" alt="Reddit IPO"></div>
+            <span class="news-source">Yahoo Finance</span>
+            <h3>Reddit shares pop 48% in highly anticipated NYSE debut</h3>
+            <p>The social media platform's successful IPO signals a potential thawing of the tech IPO market which has been largely dormant for the past two years.</p>
+        </a>
+        <!-- BÀI BÁO 11 -->
+        <a href="https://www.wsj.com/economy" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop" alt="Economy"></div>
+            <span class="news-source">Wall Street Journal</span>
+            <h3>US Consumer confidence holds steady despite inflation fears</h3>
+            <p>Recent retail sales data shows the American consumer remains resilient, complicating the Federal Reserve's path to an economic soft landing.</p>
+        </a>
+        <!-- BÀI BÁO 12 -->
+        <a href="https://www.reuters.com/technology/" target="_blank" class="news-card">
+            <div class="img-box-news"><img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=800&auto=format&fit=crop" alt="Microsoft"></div>
+            <span class="news-source">Reuters</span>
+            <h3>Microsoft solidifies position as world's most valuable company</h3>
+            <p>Capitalizing heavily on its OpenAI partnership, Microsoft's market capitalization pulls further ahead of Apple, driven by rapid enterprise AI adoption.</p>
+        </a>
+    </div>
+</div>
+
+
+<!-- KHU VỰC OUR TEAM -->
+<section class="team-section" id="team-section">
+    <h2>OUR TEAM</h2>
+    <div class="team-grid">
+        <!-- THÀNH VIÊN 1 -->
+        <div class="team-card">
+            <img src="Pics/profile NYN.jpg" alt="Member 1" class="team-img">
+            <h3 class="team-name">Nguyen Nhi</h3>
+            <p class="team-role">Project Leader</p>
+            <p class="team-task">Develops core features, system architecture, and handles key functionalities.</p>
+            <a href="https://drive.google.com/file/d/1KCRB1vWy2FbdqJHDOlCgIXdeBQ6KNHtX/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+     
+        <!-- THÀNH VIÊN 2 -->
+        <div class="team-card">
+            <img src="Pics/Khải.jpg" alt="Member 2" class="team-img">
+            <h3 class="team-name">Hoang Khai</h3>
+            <p class="team-role">UI/UX Designer</p>
+            <p class="team-task">Create wireframes, prototypes, and design user interfaces.</p>
+            <a href="https://drive.google.com/file/d/1zzivjLtEK59ezY8K9Mv4VoV-VBZ6eoYA/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 3 -->
+        <div class="team-card">
+            <img src="Pics/Thúy Vy ảnh.jpg" alt="Member 3" class="team-img">
+            <h3 class="team-name">Thuy Vy</h3>
+            <p class="team-role">UI/UX Designer</p>
+            <p class="team-task">Create wireframes, prototypes, and design user interfaces.</p>
+            <a href="https://drive.google.com/file/d/1eRT9TJYOisSPAJDFAnPY4KRRZdkBW_a2/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 4 -->
+        <div class="team-card">
+            <img src="Pics/Ngọc Vy.jpg" alt="Member 4" class="team-img">
+            <h3 class="team-name">Ngoc Vy</h3>
+            <p class="team-role">Tester & Quality Assurance (QA)</p>
+            <p class="team-task">Test for bugs, ensure web performance and functionality.</p>
+            <a href="https://drive.google.com/file/d/1QEaJkoUBGxvGgwI8crUldYc0MWCraDOm/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 5 -->
+        <div class="team-card">
+            <img src="Pics/Hong anh.jpg" alt="Member 5" class="team-img">
+            <h3 class="team-name">Hong Anh </h3>
+            <p class="team-role">Frontend Developer</p>
+            <p class="team-task">Build responsive web interfaces and client-side logic.</p>
+            <a href="https://drive.google.com/file/d/1eI4_-Rr-MQzcMqlk-iMz47DTGLpnAy4Q/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 6 -->
+        <div class="team-card">
+            <img src="Pics/AN.jpg" alt="Member 6" class="team-img">
+            <h3 class="team-name">Thuy An</h3>
+            <p class="team-role">Business Analyst (BA)</p>
+            <p class="team-task">Collect requirements and document project specifications.</p>
+            <a href="https://drive.google.com/file/d/1IBcXvVPXKdm09kaDh0lB3U0UrMECe_FV/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 7 -->
+        <div class="team-card">
+            <img src="Pics/NYN166.jpg" alt="Member 7" class="team-img">
+            <h3 class="team-name">Nguyen Nhi</h3>
+            <p class="team-role">Backend Developer</p>
+            <p class="team-task">Develop server-side logic and database management.</p>
+            <a href="https://drive.google.com/file/d/1X97Co1djSVbhoSR1jHduiPmrDnDUK5AY/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+        <!-- THÀNH VIÊN 8 -->
+        <div class="team-card">
+            <img src="Pics/Thảo.jpg" alt="Member 8" class="team-img">
+            <h3 class="team-name">Vo Thao</h3>
+            <p class="team-role">Security Analyst</p>
+            <p class="team-task">Vulnerability scanning, threat modeling, and risk assessment.</p>
+            <a href="https://drive.google.com/file/d/10Vjr6UEjKOSfNQhtSvTn6WVB-1SiMA8Q/view?usp=sharing" target="_blank" class="btn-cv"><i class='bx bxs-file-pdf'></i> View CV</a>
+        </div>
+    </div>
+</section>
+
+
+        <div class="signup-section">
+            <button class="btn-signup-large" onclick="openLogin()">Sign up to continue</button>
+        </div>
+
+<div class="slider-box">
+   <div class="slider-track">
+       <!-- Danh sách ảnh lần 1 -->
+       <div class="slide-item"><img src="Pics/greed and reason.jpg" alt="Pic 13"></div>
+       <div class="slide-item"><img src="Pics/Stock Market Rebirth.jpg" alt="Pic 14"></div>
+       <div class="slide-item"><img src="Pics/logo KHDL.jpg" ></div>
+       <div class="slide-item"><img src="Pics/candle chart.jpg" alt="Pic 16"></div>
+       <div class="slide-item"><img src="Pics/upcom.jpg" alt="Pic 17"></div>
+       <div class="slide-item"><img src="Pics/logo hub.png" alt="Pic 18"></div>
+     
+       <!-- Danh sách ảnh lần 2 (Để tạo vòng lặp vô tận) -->
+       <div class="slide-item"><img src="Pics/greed and reason.jpg" alt="Pic 13"></div>
+       <div class="slide-item"><img src="Pics/Stock Market Rebirth.jpg" alt="Pic 14"></div>
+       <div class="slide-item"><img src="Pics/logo KHDL.jpg" alt="Pic 15"></div>
+       <div class="slide-item"><img src="Pics/candle chart.jpg" alt="Pic 16"></div>
+       <div class="slide-item"><img src="Pics/upcom.jpg" alt="Pic 17"></div>
+       <div class="slide-item"><img src="Pics/logo hub.png" alt="Pic 18"></div>
+   </div>
+</div>
+
+
+   <footer>
+       <div class="footer-left">
+           <div class="logo-box">
+   <!-- <span>STOCK</span>
+    <div class="logo-box">
+    <img src="logo hub.png" alt="HUB"><span>STOCK</span>
+</div>  --> 
+    <img src="Pics/logo hub.png" alt="HUB" class="logo-hub-white"> <span>STOCK</span>
+</div>
+           <p style="color: #a0aec0; margin: 25px 0; font-size: 14px; line-height: 1.8;">
+    <strong>STOCKHUB JOINT STOCK COMPANY</strong><br>
+    36 Ton That Dam Street, Nguyen Thai Binh Ward,<br>
+    District 1, Ho Chi Minh City, Vietnam.
+</p>
+           <div class="social-icons">
+               <a href="#"><i class='bx bxl-facebook-circle'></i></a>
+               <a href="#"><i class='bx bxl-instagram'></i></a>
+               <a href="#"><i class='bx bxl-linkedin-square'></i></a>
+               <a href="#"><i class='bx bxl-twitter'></i></a>
+           </div>
+       </div>
+       <div class="footer-right">
+           <div class="footer-col">
+               <h4>About</h4>
+               <p>Introduction</p>
+               <p>Our Team</p>
+               <p>Careers</p>
+           </div>
+           <div class="footer-col">
+               <h4>Support</h4>
+               <p>Help Center</p>
+               <p>Terms of Service</p>
+               <p>Privacy Policy</p>
+           </div>
+           <div class="footer-col">
+               <h4>Contact</h4>
+               <p><i class='bx bxs-phone-call'></i> 1900 1234</p>
+               <p><i class='bx bxs-envelope'></i> support@stockhub.vn</p>
+               <p><i class='bx bxs-time'></i> Mon - Fri: 8:00 - 17:00</p>
+           </div>
+       </div>
+            <div class="footer-map">
+    <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.521572006132!2d106.7011933753648!3d10.771302889377402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f4094a8270d%3A0xc078864f1c98e69d!2zMzYgVMO0biBUaOG6pXQgxJDhuqFtLCBOZ3V54buFbiBUaMOhaSBCw6bmgsIFF14bqtbiAxLCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1711174000000!5m2!1svi!2s"
+        width="100%"
+        height="250"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</div>
+       
+   </footer>
+
+
+   <!-- MODAL: DÙNG NGUYÊN SOURCE CODE "KHÔNG LỖI" CỦA BẠN -->
+   <div class="modal-overlay" id="loginModal">
+       <i class='bx bx-x close-btn' onclick="closeLogin()"></i>
+       <div class="container" id="mainContainer">
+         
+           <!-- FORM LOGIN -->
+            <!-- Trong form LOGIN, sau nút bấm Login -->
+           <p class="mobile-toggle" onclick="toggleForm()">Don't have an account?
+               <span style="color: var(--primary-color); font-weight:700;">Register</span></p>
+
+                   <div class="form-box login">
+           <form action="#">
+               <h1>Login</h1>
+
+               <div class="input-box"><input type="text" placeholder="Username" required><i class='bx bxs-user'></i></div>
+               <div class="input-box">
+                    <i class='bx bxs-lock-alt'></i>
+                   <input type="password" class="pass-input" placeholder="Password" required>
+                   <i class='bx bx-hide toggle-pass'></i>
+               </div>
+               <div style="text-align: right; margin-bottom: 15px;"><a href="#" style="color: #333; font-size: 14px;">Forgot Password?</a></div>
+             
+               <button type="button" class="btn-form" onclick="showOTP()">Login</button>
+
+
+
+               <p class="mobile-toggle" onclick="toggleForm()" style="margin-top: 20px; cursor: pointer;">
+                   Don't have an account? <span style="color: var(--primary-color); font-weight: bold;">Register</span>
+               </p>
+
+
+               <p style="margin: 15px 0;">or login with</p>
+               <div class="social-icons">
+                   <a href="#"><i class='bx bxl-google' ></i></a>
+                   <a href="#"><i class='bx bxl-facebook' ></i></a>
+                   <a href="#"><i class='bx bxl-github' ></i></a>
+               </div>
+           </form>
+       </div>
+
+           <!-- FORM REGISTER -->
+
+       <!-- Trong form REGISTER, sau nút bấm Register -->
+           <p class="mobile-toggle" onclick="toggleForm()">Already have an account?
+               <span style="color: var(--primary-color); font-weight:700;">Login</span></p>
+
+          <div class="form-box register">
+            <form action="#">
+                <h1>Registration</h1>
+                <div class="input-box"><input type="text" placeholder="Username" required><i class='bx bxs-user'></i></div>
+                <div class="input-box"><input type="email" placeholder="Email" required><i class='bx bxs-envelope' ></i></div>
+              <!-- <div class="input-box"><input type="tel" placeholder="Phone Number" required><i class='bx bxs-phone'></i></div> -->  
+                <div class="input-box">
+                    <input type="password" id="reg-pass" class="pass-input" placeholder="Password" required>
+                    <i class='bx bx-hide toggle-pass'></i><i class='bx bxs-lock-alt' ></i>
+                    <span id="reg-error" class="error-text">8+ characters and include a number, an upcase letter, special characters</span>
+                </div>
+               
+                <button type="submit" class="btn-form">Register</button>
+
+                <p class="mobile-toggle" onclick="toggleForm()" style="margin-top: 20px; cursor: pointer; text-align: center;">
+                    Already have an account? <span style="color: #00d084; font-weight: 700;">Login</span>
+                </p>
+            </form>
+        </div>
+
+        <!-- CỤM OTP 7 SỐ VÀ KẾT NỐI SERVER -->
+        <div class="form-box otp" id="otp-box" style="display: none; width: 100%; height: 100%; background: #fff; flex-direction: column; justify-content: center; align-items: center; z-index: 100; position: absolute; top: 0; left: 0;">
+            <form onsubmit="verifyMyOTP(event)">
+                <h1>OTP Verification</h1>
+                <p id="otp-text" style="font-size: 14px; color: #666; margin-bottom: 25px; text-align: center; padding: 0 20px;">
+                    A 7-digit code has been sent to your email.
+                </p>
+                <div class="input-box">
+                    <!-- Đã chỉnh lên 7 ký tự -->
+                    <input type="text" placeholder="-------" maxlength="7" style="text-align: center; font-size: 24px; letter-spacing: 10px; font-weight: 700;" required>
+                </div>
+                <button type="submit" class="btn-form">Verify Now</button>
+                <p onclick="showLoginFromOTP()" style="margin-top: 20px; cursor: pointer; color: #00d084; font-size: 14px; font-weight: 600;">
+                    <i class='bx bx-left-arrow-alt'></i> Back to Login
+                </p>
+            </form>
+        </div>
+
+        <div class="toggle-box">
+    <!-- Phía bên phải (Hiện khi ở form Register) -->
+    <div class="toggle-panel toggle-right">
+        <h2 class="welcome-title">Welcome Back!</h2>
+        
+        <!-- THAY THẾ Ở ĐÂY -->
+        <div class="logo-box-modal">
+            <img src="Pics/logo hub.png" alt="HUB">
+            <span>STOCK</span>
+        </div>
+        
+        <p class="sub-text">Already have an account?</p>
+        <button class="btn-white login-btn">Login</button>
+    </div>
+
+    <!-- Phía bên trái (Hiện khi ở form Login) -->
+    <div class="toggle-panel toggle-left">
+        <h2 class="welcome-title">Hello, Welcome!</h2>
+        
+        <!-- THAY THẾ Ở ĐÂY (Sửa lại lỗi thẻ đóng lộn xộn trong ảnh) -->
+        <div class="logo-box-modal">
+            <img src="Pics/logo hub.png" alt="HUB">
+            <span>STOCK</span>
+        </div>
+        
+        <p class="sub-text">Don't have an account?</p>
+        <button class="btn-white register-btn">Register</button>
+    </div>
+</div>
+
+   <!-- THƯ VIỆN FIREBASE -->
+<!-- THƯ VIỆN FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+   <!-- PHẦN BIỂU ĐỒ VN-INDEX (Giữ nguyên Script này trong HTML hoặc chuyển vào script.js) -->
+   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  
+
+   <!-- THƯ VIỆN FIREBASE SDK (Phải để TRƯỚC file script.js) -->
+   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+   <!-- FILE JS NỘI BỘ CỦA BẠN -->
+   <script src="script.js"></script>
+</body>
+</html>
